@@ -1,0 +1,52 @@
+.sidebar {
+  border-right: 1px solid #999999;
+  background-color: white;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 280px;
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.primaryColor {
+  color: red;
+}
+
+/* Sidebar Items */
+.sidebar_item {
+  font-size: 20px;
+}
+
+.sidebar_item:hover {
+  background-color: #c7bfbf91;
+}
+
+.create_button {
+  font-size: 22px;
+  font-size: bold;
+  border: 1px solid #999999;
+  border-radius: 60px;
+  padding: 6px 36px;
+  text-decoration: none;
+  color: black;
+}
+
+.create_button:hover {
+  background-color: #c7bfbf91;
+}
+
+.create_button:visited {
+  text-decoration: none;
+  color: black;
+}
+
+.plus_icon {
+  color: red;
+  font-weight: bold;
+  font-size: 30px;
+}
