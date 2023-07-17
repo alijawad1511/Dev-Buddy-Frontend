@@ -65,7 +65,7 @@ const CreateProject = () => {
     // API Parameters Configuration
     var config = {
       method: "POST",
-      url: `http://localhost:5000/api/projects/create-project`,
+      url: `${process.env.REACT_APP_BASE_URL}/api/projects/create-project`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),

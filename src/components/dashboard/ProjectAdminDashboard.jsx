@@ -95,13 +95,13 @@ const ProjectAdminDashboard = () => {
           </DashboardIcon>
           <DashboardTitle>Chatroom</DashboardTitle>
         </DashboardCard>
-        <DashboardCard to="assigned-tasks" state={{ projectId }}>
+        <DashboardCard to="task-tracking" state={{ projectId }}>
           <DashboardIcon>
             <Assignment color="#E64A19" />
           </DashboardIcon>
-          <DashboardTitle>Assigned Tasks</DashboardTitle>
+          <DashboardTitle>Task Tracking</DashboardTitle>
         </DashboardCard>
-        <DashboardCard to="admin-approvals" state={{ projectId }}>
+        <DashboardCard to="manage-approvals" state={{ projectId }}>
           <DashboardIcon>
             <FactCheck color="#009688" />
           </DashboardIcon>

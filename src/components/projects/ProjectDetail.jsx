@@ -2,6 +2,7 @@ import { MoreVert, ThumbUp, ThumbUpOutlined } from "@mui/icons-material";
 import {
   Avatar,
   Box,
+  CircularProgress,
   Divider,
   IconButton,
   styled,
@@ -50,14 +51,15 @@ const ProjectDetail = () => {
   const {
     state: { projectId },
   } = useLocation();
-
   const [liked, setLiked] = useState();
   const [projectLikeCount, setProjectLikeCount] = useState();
   const [project, setProject] = useState({});
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     var config = {
       method: "GET",
-      url: `http://localhost:5000/api/projects/project/${projectId}`,
+      url: `${process.env.REACT_APP_BASE_URL}/api/projects/project/${projectId}`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),
@@ -73,6 +75,9 @@ const ProjectDetail = () => {
       })
       .catch((error) => {
         console.log(error.message);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -81,7 +86,7 @@ const ProjectDetail = () => {
     if (!liked) {
       axios
         .post(
-          "http://localhost:5000/api/projects/like",
+          `${process.env.REACT_APP_BASE_URL}/api/projects/like`,
           { project_id: project._id },
           {
             headers: {
@@ -106,7 +111,7 @@ const ProjectDetail = () => {
     } else {
       axios
         .post(
-          "http://localhost:5000/api/projects/unlike",
+          `${process.env.REACT_APP_BASE_URL}/api/projects/unlike`,
           { project_id: project._id },
           {
             headers: {
@@ -134,70 +139,89 @@ const ProjectDetail = () => {
   return (
     <Box component="main" sx={{ flexGrow: 1 }}>
       <DrawerHeader />
-      <Box className="px-5 py-3">
-        <MainTitle variant="h5">{project.title}</MainTitle>
-        <Box className="header border-top border-bottom py-3 d-flex align-items-center justify-content-between">
-          <Box className="d-flex align-items-center">
-            <Avatar
-              sx={{ width: 50, height: 50, marginRight: "8px" }}
-              src="https://i.ytimg.com/an/spXibirpUHA/6341534521799397715_mq.jpg?v=62b744c2"
-            />
-            <div>
-              <Typography
-                sx={{ fontSize: "16px", fontWeight: "bold", color: "#0075E1" }}
-              >
-                {project.projectAdmin}
-              </Typography>
-              <Typography
+      {loading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box className="px-5 py-3">
+          <MainTitle variant="h5">{project.title}</MainTitle>
+          <Box className="header border-top border-bottom py-3 d-flex align-items-center justify-content-between">
+            <Box className="d-flex align-items-center">
+              <Avatar
+                sx={{ width: 50, height: 50, marginRight: "8px" }}
+                src="https://i.ytimg.com/an/spXibirpUHA/6341534521799397715_mq.jpg?v=62b744c2"
+              />
+              <div>
+                <Typography
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    color: "#0075E1",
+                  }}
+                >
+                  {project.projectAdmin}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "12px",
+                    fontWeight: "bolder",
+                    color: "#999999",
+                  }}
+                >
+                  Project Admin
+                </Typography>
+              </div>
+            </Box>
+            <div className="buttons">
+              <LikeButton
                 sx={{
-                  fontSize: "12px",
-                  fontWeight: "bolder",
-                  color: "#999999",
+                  cursor: "pointer",
+                  color: liked ? "#0075E1" : "black",
                 }}
+                onClick={handleLikeClick}
               >
-                Project Admin
-              </Typography>
+                {liked ? (
+                  <ThumbUp className="me-2" />
+                ) : (
+                  <ThumbUpOutlined className="me-2" />
+                )}
+                <Typography
+                  component="span"
+                  sx={{ fontSize: "16px", fontWeight: "bold" }}
+                >
+                  {projectLikeCount}
+                </Typography>
+              </LikeButton>
             </div>
           </Box>
-          <div className="buttons">
-            <LikeButton
-              sx={{
-                cursor: "pointer",
-                color: liked ? "#0075E1" : "black",
-              }}
-              onClick={handleLikeClick}
-            >
-              {liked ? (
-                <ThumbUp className="me-2" />
-              ) : (
-                <ThumbUpOutlined className="me-2" />
-              )}
-              <Typography
+          <Box className="mt-2 py-2 border-bottom">{project.description}</Box>
+          <Typography variant="h5" className="fw-bold my-2">
+            Tags
+          </Typography>
+          <Box className="d-flex flex-wrap tags py-1">
+            {/*'?' Check If Array exists or not*/}
+            {project.tags?.map((tag) => (
+              <Tag
+                key={tag}
                 component="span"
-                sx={{ fontSize: "16px", fontWeight: "bold" }}
+                sx={{
+                  "&:hover": { backgroundColor: "#0075E1", color: "white" },
+                }}
               >
-                {projectLikeCount}
-              </Typography>
-            </LikeButton>
-          </div>
+                {tag.toUpperCase()}
+              </Tag>
+            ))}
+          </Box>
         </Box>
-        <Box className="mt-2 py-2 border-bottom">{project.description}</Box>
-        <Typography variant="h5" className="fw-bold my-2">
-          Tags
-        </Typography>
-        <Box className="d-flex flex-wrap tags py-1">
-          {/*'?' Check If Array exists or not*/}
-          {project.tags?.map((tag) => (
-            <Tag
-              key={tag}
-              component="span"
-              sx={{ "&:hover": { backgroundColor: "#0075E1", color: "white" } }}
-            >
-              {tag.toUpperCase()}
-            </Tag>
-          ))}
-        </Box>
-      </Box>
+      )}
     </Box>
   );
 };

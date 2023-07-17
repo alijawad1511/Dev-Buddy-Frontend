@@ -42,7 +42,7 @@ const Followings = () => {
     // Configuration
     var config = {
       method: "GET",
-      url: "http://localhost:5000/api/users/my-followings",
+      url: `${process.env.REACT_APP_BASE_URL}/api/users/my-followings`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),
@@ -66,7 +66,7 @@ const Followings = () => {
 
     var config = {
       method: "POST",
-      url: "http://localhost:5000/api/users/unfollow",
+      url: `${process.env.REACT_APP_BASE_URL}/api/users/unfollow`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),

@@ -34,7 +34,7 @@ const Requests = () => {
     // Configuration
     var config = {
       method: "GET",
-      url: "http://localhost:5000/api/projects/join-requests",
+      url: `${process.env.REACT_APP_BASE_URL}/api/projects/join-requests`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),
@@ -55,7 +55,7 @@ const Requests = () => {
 
     var config = {
       method: "POST",
-      url: "http://localhost:5000/api/projects/accept-join-request",
+      url: `${process.env.REACT_APP_BASE_URL}/api/projects/accept-join-request`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),
@@ -79,7 +79,7 @@ const Requests = () => {
 
     var config = {
       method: "POST",
-      url: "http://localhost:5000/api/projects/reject-join-request",
+      url: `${process.env.REACT_APP_BASE_URL}/api/projects/reject-join-request`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),

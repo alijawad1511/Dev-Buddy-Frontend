@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { createContext,useState } from 'react';
 
 export const ProjectContext = createContext();
@@ -8,12 +9,18 @@ export const ProjectProvider = (props) => {
     const [project,setProject] = useState({});  // Project Detail
     const [liked,setLiked] = useState();
     const [projectLikeCount,setProjectLikeCount] = useState();
+    const [participants,setParticipants] = useState([]);
+    const [assignedTasks,setAssignedTasks] = useState([]);
+    const [completedTasks,setCompletedTasks] = useState([]);
+
+    // Tasks
+    const [tasks,setTasks] = useState([]);
 
     const getAllProjects = () => {
         // Configuration
         var config = {
             method: "GET",
-            url: "http://localhost:5000/api/projects/all-projects",
+            url: `${process.env.REACT_APP_BASE_URL}/api/projects/all-projects`,
             headers: {
                 "Content-Type": "application/json",
                 "auth-token": localStorage.getItem("garbage"),
@@ -32,7 +39,7 @@ export const ProjectProvider = (props) => {
     const getProjectById = (projectId) => {
         var config = {
             method: "GET",
-            url: `http://localhost:5000/api/projects/project/${projectId}`,
+            url: `${process.env.REACT_APP_BASE_URL}/api/projects/project/${projectId}`,
             headers: {
                 "Content-Type": "application/json",
                 "auth-token": localStorage.getItem("garbage"),
@@ -60,7 +67,7 @@ export const ProjectProvider = (props) => {
     }
 
     return (
-        <ProjectContext.Provider value={{}}>
+        <ProjectContext.Provider value={{ tasks,setTasks,assignedTasks,setAssignedTasks,participants,setParticipants }}>
             {props.children}
         </ProjectContext.Provider>
     )

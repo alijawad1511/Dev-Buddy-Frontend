@@ -63,7 +63,7 @@ const DeveloperProfile = () => {
     // Configuration
     var config = {
       method: "GET",
-      url: `http://localhost:5000/api/users/user/${developerId}`,
+      url: `${process.env.REACT_APP_BASE_URL}/api/users/user/${developerId}`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),

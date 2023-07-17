@@ -3,6 +3,7 @@ import { Box, styled, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { ProjectContext } from "../../contexts/ProjectContext";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -29,7 +30,7 @@ const ManageParticipants = () => {
   const {
     state: { projectId },
   } = useLocation();
-  const [participants, setPartcipants] = useState([]);
+  const { participants, setPartcipants } = useContext(ProjectContext);
 
   useEffect(() => {
     // API Call Here GetAllProjects
@@ -41,7 +42,7 @@ const ManageParticipants = () => {
     // Configuration
     var config = {
       method: "GET",
-      url: "http://localhost:5000/api/projects/participants",
+      url: `${process.env.REACT_APP_BASE_URL}/api/projects/participants`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),
@@ -52,6 +53,7 @@ const ManageParticipants = () => {
     axios(config)
       .then((response) => {
         console.log(response.data);
+        setPartcipants(response.data.participants);
       })
       .catch((error) => {
         console.log(error.message);

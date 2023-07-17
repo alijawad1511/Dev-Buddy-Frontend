@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import swal from "sweetalert";
 
 const Title = styled(Typography)`
   font-size: 36px;
@@ -93,7 +94,7 @@ const SignUpPage = () => {
     // Configuration
     var config = {
       method: "POST",
-      url: "http://localhost:5000/api/users/signup",
+      url: `${process.env.REACT_APP_BASE_URL}/api/users/signup`,
       headers: {
         "Content-Type": "application/json",
       },
@@ -103,13 +104,12 @@ const SignUpPage = () => {
     // API Call
     axios(config)
       .then((response) => {
-        console.log(response.data.message);
-
+        swal("Success", response.data.message, "success");
         // Navigate to Login Page
         navigate("/");
       })
       .catch((error) => {
-        console.log(error.message);
+        swal("Error", error.response.data.message, "error");
       });
   };
 

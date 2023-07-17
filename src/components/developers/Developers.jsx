@@ -28,6 +28,8 @@ const SearchField = styled("input")({
 const Developers = () => {
   const [developers, setDevelopers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredDevelopers, setFilteredDevelopers] = useState([]);
 
   useEffect(() => {
     // Body
@@ -38,7 +40,7 @@ const Developers = () => {
     // Configuration
     var config = {
       method: "GET",
-      url: "http://localhost:5000/api/users/all-developers",
+      url: `${process.env.REACT_APP_BASE_URL}/api/users/all-developers`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),
@@ -49,6 +51,7 @@ const Developers = () => {
     axios(config)
       .then((response) => {
         setDevelopers(response.data.developers);
+        setFilteredDevelopers(response.data.developers);
       })
       .catch((error) => {
         console.log(error.message);
@@ -57,6 +60,28 @@ const Developers = () => {
         setLoading(false);
       });
   }, []);
+
+  const handleSearchDevelopers = (e) => {
+    // Filter data in table on frontend
+    if (e.target.value === "") {
+      setFilteredDevelopers(developers);
+    } else {
+      setFilteredDevelopers(
+        developers.filter(
+          (developer) =>
+            developer.firstname
+              .toLowerCase()
+              .includes(e.target.value.toLowerCase()) ||
+            developer.lastname
+              .toLowerCase()
+              .includes(e.target.value.toLowerCase()) ||
+            developer.domain
+              .toLowerCase()
+              .includes(e.target.value.toLowerCase())
+        )
+      );
+    }
+  };
 
   return (
     <Box component="main" sx={{ flexGrow: 1 }}>
@@ -72,7 +97,11 @@ const Developers = () => {
           }}
         >
           <Search sx={{ width: "25px", height: "25px" }} className="me-2" />
-          <SearchField type="text" placeholder="Search Developer Here" />
+          <SearchField
+            type="text"
+            onChange={(e) => handleSearchDevelopers(e)}
+            placeholder="Search Developer Here"
+          />
         </Box>
         <Box>
           {loading ? (
@@ -86,10 +115,17 @@ const Developers = () => {
             >
               <CircularProgress />
             </Box>
-          ) : (
-            developers.map((developer) => (
+          ) : filteredDevelopers.length > 0 ? (
+            filteredDevelopers.map((developer) => (
               <Developer key={developer._id} developer={developer} />
             ))
+          ) : (
+            <Typography
+              variant="h6"
+              className="text-center text-primary fw-bold"
+            >
+              No Developer Found 🙁
+            </Typography>
           )}
         </Box>
       </Box>

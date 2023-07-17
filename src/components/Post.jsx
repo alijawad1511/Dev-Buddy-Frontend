@@ -58,6 +58,21 @@ const Post = ({ project }) => {
   const [projectLikeCount, setProjectLikeCount] = useState(project.likeCount);
   const [joinRequest, setJoinRequest] = useState(project.joinRequest);
   const [joined, setJoined] = useState(project.joined);
+  const createdAt = new Date(project.createdAt);
+
+  // Format Time as "10:23 AM"
+  const time = createdAt.toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+
+  // Format Date as "07 June 2023"
+  const date = createdAt.toLocaleDateString(undefined, {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
 
   // State for handling menu anchor element
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
@@ -77,7 +92,7 @@ const Post = ({ project }) => {
     if (!projectLiked) {
       axios
         .post(
-          "http://localhost:5000/api/projects/like",
+          `${process.env.REACT_APP_BASE_URL}/api/projects/like`,
           { project_id: project._id },
           {
             headers: {
@@ -99,7 +114,7 @@ const Post = ({ project }) => {
     } else {
       axios
         .post(
-          "http://localhost:5000/api/projects/unlike",
+          `${process.env.REACT_APP_BASE_URL}/api/projects/unlike`,
           { project_id: project._id },
           {
             headers: {
@@ -130,7 +145,7 @@ const Post = ({ project }) => {
     if (joinRequest) {
       var config = {
         method: "POST",
-        url: "http://localhost:5000/api/projects/cancel-join-request",
+        url: `${process.env.REACT_APP_BASE_URL}/api/projects/cancel-join-request`,
         headers: {
           "Content-Type": "application/json",
           "auth-token": localStorage.getItem("garbage"),
@@ -149,7 +164,7 @@ const Post = ({ project }) => {
     } else {
       var config = {
         method: "POST",
-        url: "http://localhost:5000/api/projects/send-join-request",
+        url: `${process.env.REACT_APP_BASE_URL}/api/projects/send-join-request`,
         headers: {
           "Content-Type": "application/json",
           "auth-token": localStorage.getItem("garbage"),
@@ -185,7 +200,7 @@ const Post = ({ project }) => {
             <Typography
               sx={{ fontSize: "12px", fontWeight: "bolder", color: "#999999" }}
             >
-              20-12-2023 at 09:34 PM
+              {`${date} at ${time}`}
             </Typography>
           </div>
         </div>

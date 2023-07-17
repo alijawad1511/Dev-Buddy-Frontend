@@ -35,6 +35,7 @@ const SearchField = styled("input")({
 const MyProjects = () => {
   const navigate = useNavigate();
   const [myProjects, setMyProjects] = useState([]);
+  const [filteredProjects, setFilteredProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -48,7 +49,7 @@ const MyProjects = () => {
     // Configuration
     var config = {
       method: "GET",
-      url: "http://localhost:5000/api/projects/my-projects",
+      url: `${process.env.REACT_APP_BASE_URL}/api/projects/my-projects`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),
@@ -59,6 +60,7 @@ const MyProjects = () => {
     axios(config)
       .then((response) => {
         setMyProjects(response.data.myProjects);
+        setFilteredProjects(response.data.myProjects);
       })
       .catch((error) => {
         console.log(error.message);
@@ -67,6 +69,19 @@ const MyProjects = () => {
         setLoading(false);
       });
   }, []);
+
+  const handleSearchMyProjects = (e) => {
+    // Filter data in table on frontend
+    if (e.target.value === "") {
+      setFilteredProjects(myProjects);
+    } else {
+      setFilteredProjects(
+        myProjects.filter((project) =>
+          project.title.toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+    }
+  };
 
   return (
     <Box component="main" sx={{ flexGrow: 1 }}>
@@ -82,7 +97,11 @@ const MyProjects = () => {
           }}
         >
           <Search sx={{ width: "25px", height: "25px" }} className="me-2" />
-          <SearchField type="text" placeholder="Search Project Here" />
+          <SearchField
+            type="text"
+            onChange={(e) => handleSearchMyProjects(e)}
+            placeholder="Search Project Here"
+          />
         </Box>
         <Button
           className="rounded-pill fw-bold"
@@ -104,8 +123,8 @@ const MyProjects = () => {
             >
               <CircularProgress />
             </Box>
-          ) : myProjects.length > 0 ? (
-            myProjects.map((project) => (
+          ) : filteredProjects.length > 0 ? (
+            filteredProjects.map((project) => (
               <MyProject key={project._id} project={project} />
             ))
           ) : (
@@ -113,7 +132,7 @@ const MyProjects = () => {
               variant="h6"
               className="text-center text-primary fw-bold"
             >
-              No Project Created Yet
+              No Project Found
             </Typography>
           )}
         </Box>

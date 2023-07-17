@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Dialog, styled, TextField, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
@@ -73,6 +73,17 @@ const LoginPage = () => {
     boxShadow: "0px 0px 15px 4px",
   };
 
+  useEffect(() => {
+    if (
+      localStorage.getItem("garbage") != undefined ||
+      localStorage.getItem("garbage") != null
+    ) {
+      // Setting Logged In User State from LocalStorage
+      setLoggedInUser(JSON.parse(localStorage.getItem("user")));
+      navigate("/timeline");
+    }
+  }, []);
+
   const handleLogin = (e) => {
     e.preventDefault();
 
@@ -85,7 +96,7 @@ const LoginPage = () => {
     // Configuration
     var config = {
       method: "POST",
-      url: "http://localhost:5000/api/users/login",
+      url: `${process.env.REACT_APP_BASE_URL}/api/users/login`,
       headers: {
         "Content-Type": "application/json",
       },
@@ -95,37 +106,15 @@ const LoginPage = () => {
     // API Call
     axios(config)
       .then((response) => {
-        console.log(response.data.user);
-
-        navigate("/timeline");
-
         // Storing User Data in Local Storage (Encrypted)
         localStorage.setItem("garbage", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
 
         setLoggedInUser(response.data.user);
+        navigate("/timeline");
       })
       .catch((error) => {
         swal("Authentication Failed", error.response.data.message, "error");
-      });
-  };
-
-  const handleForgotPassword = () => {
-    // Code for Sending an Email
-    console.log("Hello");
-    axios
-      .post("http://localhost:5000/api/users/forgot-password", {
-        headers: {
-          "Content-Type": "application/json",
-          "auth-token": localStorage.getItem("garbage"),
-        },
-      })
-      .then((response) => {
-        // Handle the successful response here
-        swal("Email Confirmation", response.data.message, "success");
-      })
-      .catch((error) => {
-        console.error(error);
-        // Handle the error here
       });
   };
 
@@ -157,7 +146,7 @@ const LoginPage = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <StyledLink onClick={handleForgotPassword} sx={{ display: "block" }}>
+          <StyledLink to="/forgot-password" sx={{ display: "block" }}>
             Forgot Your Password?
           </StyledLink>
           <LoginButton type="submit">Login</LoginButton>

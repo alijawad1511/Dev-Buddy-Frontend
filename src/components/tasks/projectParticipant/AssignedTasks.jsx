@@ -1,9 +1,10 @@
 import { Box, styled, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import AssignedTask from "./AssignedTask";
 import axios from "axios";
 import swal from "sweetalert";
 import { useLocation } from "react-router-dom";
-import CompletedTask from "./CompletedTask";
+import { ProjectContext } from "../../../contexts/ProjectContext";
 
 const MainTitle = styled(Typography)`
   font-size: 30px;
@@ -19,8 +20,8 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
-const CompletedTasks = () => {
-  const [completedTasks, setCompletedTasks] = useState([]);
+const AssignedTasks = () => {
+  const { assignedTasks, setAssignedTasks } = useContext(ProjectContext);
   const {
     state: { projectId },
   } = useLocation();
@@ -28,7 +29,7 @@ const CompletedTasks = () => {
   useEffect(() => {
     axios
       .post(
-        `${process.env.REACT_APP_BASE_URL}/api/projects/completed-tasks`,
+        `${process.env.REACT_APP_BASE_URL}/api/projects/assigned-tasks`,
         { projectId },
         {
           headers: {
@@ -38,8 +39,7 @@ const CompletedTasks = () => {
         }
       )
       .then((response) => {
-        setCompletedTasks(response.data.completedTasks);
-        console.log(response.data.completedTasks);
+        setAssignedTasks(response.data.assignedTasks);
       })
       .catch((error) => {
         swal("Error", error.response.data.message, "error");
@@ -50,10 +50,10 @@ const CompletedTasks = () => {
     <Box component="main" sx={{ flexGrow: 1 }}>
       <DrawerHeader />
       <Box className="px-5 py-3">
-        <MainTitle variant="h5">Completed Tasks</MainTitle>
+        <MainTitle variant="h5">Assigned Tasks</MainTitle>
         <Box className="d-flex flex-wrap mt-3">
-          {completedTasks?.map((task) => (
-            <CompletedTask key={task._id} projectId={projectId} task={task} />
+          {assignedTasks?.map((task) => (
+            <AssignedTask key={task._id} projectId={projectId} task={task} />
           ))}
         </Box>
       </Box>
@@ -61,4 +61,4 @@ const CompletedTasks = () => {
   );
 };
 
-export default CompletedTasks;
+export default AssignedTasks;

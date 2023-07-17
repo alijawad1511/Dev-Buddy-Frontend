@@ -43,7 +43,7 @@ const Followers = () => {
     // Configuration
     var config = {
       method: "GET",
-      url: "http://localhost:5000/api/users/my-followers",
+      url: `${process.env.REACT_APP_BASE_URL}/api/users/my-followers`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),
@@ -67,7 +67,7 @@ const Followers = () => {
 
     var config = {
       method: "POST",
-      url: "http://localhost:5000/api/users/remove-follower",
+      url: `${process.env.REACT_APP_BASE_URL}/api/users/remove-follower`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),

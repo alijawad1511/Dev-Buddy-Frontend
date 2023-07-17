@@ -42,7 +42,7 @@ const ProjectTeam = () => {
     // Configuration
     var config = {
       method: "POST",
-      url: "http://localhost:5000/api/projects/participants",
+      url: `${process.env.REACT_APP_BASE_URL}/api/projects/participants`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),
@@ -59,33 +59,6 @@ const ProjectTeam = () => {
         console.log(error.message);
       });
   }, []);
-
-  const developers = [
-    {
-      _id: 1,
-      firstname: "Jawad",
-      lastname: "Shah",
-      domain: "Full Stack Developer",
-    },
-    {
-      _id: 2,
-      firstname: "Khawaja",
-      lastname: "Shaheryar",
-      domain: "AI Engineer",
-    },
-    {
-      _id: 3,
-      firstname: "Mehroz",
-      lastname: "Mustafa",
-      domain: "ML Engineer",
-    },
-    {
-      _id: 4,
-      firstname: "Javed",
-      lastname: "Baloch",
-      domain: "Full Stack Developer",
-    },
-  ];
 
   return (
     <Box component="main" sx={{ flexGrow: 1 }}>

@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import React, { useState } from "react";
+import swal from "sweetalert";
 
 const StyledModal = styled(Modal)({
   display: "flex",
@@ -34,21 +35,25 @@ const EditSkillsModal = ({ open, setOpen }) => {
     console.log("Platform :", socialPlatform);
     console.log("URL :", url);
     // API Call to Add Social Link
-    // axios
-    //   .post(
-    //     "http://localhost:5000/api/users/add-skills",
-    //     {},
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         "auth-token": localStorage.getItem("garbage"),
-    //       },
-    //     }
-    //   )
-    //   .then((response) => {
-    //     console.log("Testing Response");
-    //   })
-    //   .catch((error) => console.log(error.message));
+    axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/api/users/add-social-link`,
+        {
+          platform: socialPlatform,
+          url: url,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": localStorage.getItem("garbage"),
+          },
+        }
+      )
+      .then((response) => {
+        console.log("Testing Response");
+        swal("Success", response.data.message, "success");
+      })
+      .catch((error) => swal("Error", error.response.data.message, "error"));
   };
 
   return (

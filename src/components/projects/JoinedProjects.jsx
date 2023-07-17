@@ -29,6 +29,7 @@ const SearchField = styled("input")({
 const JoinedProjects = () => {
   const navigate = useNavigate();
   const [joinedProjects, setJoinedProjects] = useState([]);
+  const [filteredProjects, setFilteredProjects] = useState([]);
 
   useEffect(() => {
     // API Call Here GetAllJoinedProjects
@@ -41,7 +42,7 @@ const JoinedProjects = () => {
     // Configuration
     var config = {
       method: "GET",
-      url: "http://localhost:5000/api/projects/joined-projects",
+      url: `${process.env.REACT_APP_BASE_URL}/api/projects/joined-projects`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),
@@ -52,11 +53,26 @@ const JoinedProjects = () => {
     axios(config)
       .then((response) => {
         setJoinedProjects(response.data.joinedProjects);
+        setFilteredProjects(response.data.joinedProjects);
       })
       .catch((error) => {
         console.log(error.message);
       });
   }, []);
+
+  const handleSearchJoinedProjects = (e) => {
+    // Filter data in table on frontend
+    if (e.target.value === "") {
+      setFilteredProjects(joinedProjects);
+    } else {
+      setFilteredProjects(
+        joinedProjects.filter((project) =>
+          project.title.toLowerCase().includes(e.target.value.toLowerCase())
+        )
+      );
+    }
+  };
+
   return (
     <Box component="main" sx={{ flexGrow: 1 }}>
       <DrawerHeader />
@@ -71,11 +87,15 @@ const JoinedProjects = () => {
           }}
         >
           <Search sx={{ width: "25px", height: "25px" }} className="me-2" />
-          <SearchField type="text" placeholder="Search Project Here" />
+          <SearchField
+            type="text"
+            onChange={(e) => handleSearchJoinedProjects(e)}
+            placeholder="Search Project Here"
+          />
         </Box>
         <Box>
-          {joinedProjects.length > 0 ? (
-            joinedProjects.map((project) => (
+          {filteredProjects.length > 0 ? (
+            filteredProjects.map((project) => (
               <JoinedProject key={project._id} project={project} />
             ))
           ) : (
@@ -83,7 +103,7 @@ const JoinedProjects = () => {
               variant="h6"
               className="text-center text-primary fw-bold"
             >
-              No Project Joined Yet 🙁
+              No Project Found 🙁
             </Typography>
           )}
         </Box>

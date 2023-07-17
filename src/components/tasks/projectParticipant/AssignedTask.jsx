@@ -8,7 +8,11 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import axios from "axios";
+import dayjs from "dayjs";
+import React, { useContext, useState } from "react";
+import swal from "sweetalert";
+import { ProjectContext } from "../../../contexts/ProjectContext";
 
 const Component = styled(Box)`
   width: 300px;
@@ -22,8 +26,38 @@ const StyledModal = styled(Modal)({
   alignItems: "center",
 });
 
-const ProjectTask = ({ task }) => {
+const AssignedTask = ({ task, projectId }) => {
   const [open, setOpen] = useState(false);
+  const { assignedTasks, setAssignedTasks } = useContext(ProjectContext);
+  const [selectedTask, setSelectedTask] = useState({});
+
+  const handleMarkComplete = (taskId) => {
+    axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/api/projects/mark-task-completed`,
+        { projectId, taskId },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": localStorage.getItem("garbage"),
+          },
+        }
+      )
+      .then((response) => {
+        swal("Success", response.data.message, "success");
+
+        // Updating Tasks Table on Frontend
+        setAssignedTasks(assignedTasks.filter((task) => task._id !== taskId));
+      })
+      .catch((error) => {
+        swal("Error", error.response.data.message, "error");
+      });
+  };
+
+  const handleOpenModal = (task) => {
+    setOpen(true);
+    setSelectedTask(task);
+  };
 
   return (
     <>
@@ -33,17 +67,16 @@ const ProjectTask = ({ task }) => {
           "&:hover": { boxShadow: "0 0 5px 0px black" },
           cursor: "pointer",
         }}
-        onClick={() => setOpen(true)}
+        onClick={() => handleOpenModal(task)}
       >
         <Box className="border-bottom px-3 pt-3 pb-2">
-          <Typography className="fw-bold">Summary</Typography>
-          <Typography>
-            Lorem ipsum dolor sit amet consectetur. Amet orci nunc odio ut
-            facilisis consectetur. Porttitor velit imperdiet egestas lacus.
-          </Typography>
+          <Typography className="fw-bold">{task.title}</Typography>
+          <Typography>{task.summary}</Typography>
         </Box>
         <Box className="d-flex align-items-center justify-content-between px-3 pt-2 pb-2">
-          <Tooltip title="Due Date: 22-01-2023">
+          <Tooltip
+            title={`Due Date: ${dayjs(task.dueDate).format("DD MMM YYYY")}`}
+          >
             <IconButton color="black">
               <Timelapse />
             </IconButton>
@@ -60,6 +93,7 @@ const ProjectTask = ({ task }) => {
               cursor: "pointer",
               "&:hover": { backgroundColor: "#026bcc", color: "white" },
             }}
+            onClick={() => handleMarkComplete(task._id)}
           >
             Mark as Complete
           </Box>
@@ -78,17 +112,19 @@ const ProjectTask = ({ task }) => {
           px={3}
           py={2}
         >
-          <Typography variant="h6">Summary</Typography>
+          <Typography variant="h6">{selectedTask?.title}</Typography>
           <Typography variant="p" sx={{ display: "block" }}>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-            Reprehenderit soluta et quam esse laboriosam? Molestias, fuga. Nihil
-            reiciendis voluptate exercitationem!
+            {selectedTask?.summary}
           </Typography>
-          <Chip icon={<Timelapse />} label="22-01-2023" sx={{ mt: 2 }} />
+          <Chip
+            icon={<Timelapse />}
+            label={dayjs(task.dueDate).format("DD MMM YYYY")}
+            sx={{ mt: 2 }}
+          />
         </Box>
       </StyledModal>
     </>
   );
 };
 
-export default ProjectTask;
+export default AssignedTask;

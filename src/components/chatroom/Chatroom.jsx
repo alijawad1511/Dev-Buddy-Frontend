@@ -56,7 +56,7 @@ const Chatroom = () => {
 
     var config = {
       method: "POST",
-      url: "http://localhost:5000/api/projects/chatroom/messages",
+      url: `${process.env.REACT_APP_BASE_URL}/api/projects/chatroom/messages`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),
@@ -95,7 +95,7 @@ const Chatroom = () => {
 
       var config = {
         method: "POST",
-        url: "http://localhost:5000/api/projects/chatroom/send-message",
+        url: `${process.env.REACT_APP_BASE_URL}/api/projects/chatroom/send-message`,
         headers: {
           "Content-Type": "application/json",
           "auth-token": localStorage.getItem("garbage"),
@@ -112,7 +112,7 @@ const Chatroom = () => {
           ]);
 
           // Emit the new message to the server
-          socket.emit("chat:message", response.data.message);
+          // socket.emit("chat:message", response.data.message);
 
           // Clear the Send Message Field
           setSentMessage("");

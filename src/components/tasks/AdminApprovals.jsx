@@ -2,7 +2,7 @@ import { Box, styled, Typography } from "@mui/material";
 import React from "react";
 import CompletedTask from "./CompletedTask";
 import PendingTask from "./PendingTask";
-import ProjectTask from "./AssignedTask";
+import ProjectTask from "./projectParticipant/AssignedTask";
 
 const MainTitle = styled(Typography)`
   font-size: 30px;

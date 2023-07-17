@@ -35,11 +35,11 @@ const Topbar = (props) => {
   const { handleSidebarOpen, open } = props;
   const navigate = useNavigate();
   const settings = ["Profile", "Account", "Dashboard", "Logout"];
-  const { socket } = useContext(UserContext);
+  const { loggedInUser, setLoggedInUser } = useContext(UserContext);
 
   const handleLogout = () => {
     localStorage.removeItem("garbage");
-    socket.emit("logout");
+    setLoggedInUser(null);
     navigate("/");
   };
 
@@ -123,9 +123,9 @@ const Topbar = (props) => {
                 onClick={(e) => setOpenUserProfileMenu(true)}
               >
                 <Avatar
-                  alt="Remy Sharp"
+                  alt="Profile"
                   sx={{ width: 40, height: 40 }}
-                  src="https://www.qmul.ac.uk/busman/media/sbm/staff/Arash-Valipour-300x300.jpg"
+                  src={JSON.parse(localStorage.getItem("user")).profile_pic}
                 />
               </IconButton>
             </Tooltip>

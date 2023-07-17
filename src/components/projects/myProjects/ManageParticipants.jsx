@@ -1,10 +1,11 @@
 import { Search } from "@mui/icons-material";
 import { Box, styled, Typography } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import MyProjectParticipant from "./MyProjectParticipant";
 import swal from "sweetalert";
+import { ProjectContext } from "../../../contexts/ProjectContext";
 
 const MainTitle = styled(Typography)`
   font-size: 30px;
@@ -28,7 +29,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 const ManageParticipants = () => {
-  const [projectParticipants, setProjectParticipants] = useState([]);
+  const { participants, setParticipants } = useContext(ProjectContext);
   const {
     state: { projectId },
   } = useLocation();
@@ -42,7 +43,7 @@ const ManageParticipants = () => {
     // Configuration
     var config = {
       method: "POST",
-      url: "http://localhost:5000/api/projects/participants",
+      url: `${process.env.REACT_APP_BASE_URL}/api/projects/participants`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),
@@ -52,11 +53,10 @@ const ManageParticipants = () => {
 
     axios(config)
       .then((response) => {
-        console.log(response.data.participants);
-        setProjectParticipants(response.data.participants);
+        setParticipants(response.data.participants);
       })
       .catch((error) => {
-        console.log(error.message);
+        swal("Error", error.response.data.message);
       });
   }, []);
 
@@ -78,7 +78,7 @@ const ManageParticipants = () => {
         // Configuration
         var config = {
           method: "POST",
-          url: "http://localhost:5000/api/projects/remove-participant",
+          url: `${process.env.REACT_APP_BASE_URL}/api/projects/remove-participant`,
           headers: {
             "Content-Type": "application/json",
             "auth-token": localStorage.getItem("garbage"),
@@ -89,14 +89,14 @@ const ManageParticipants = () => {
         axios(config)
           .then((response) => {
             // Update Frontend by changing state
-            setProjectParticipants(
-              projectParticipants.filter((obj) => obj._id !== participant._id)
+            setParticipants(
+              // projectParticipants.filter((obj) => obj._id !== participant._id)
+              participants.filter((obj) => obj._id !== participant._id)
             );
             swal("Success!", response.data.message, "success");
-            console.log(response.data.message);
           })
           .catch((error) => {
-            console.log(error.message);
+            swal("Error!", error.response.data.message, "error");
           });
       }
     });
@@ -119,7 +119,7 @@ const ManageParticipants = () => {
           <SearchField type="text" placeholder="Search Team Member" />
         </Box>
         <Box>
-          {projectParticipants.map((developer) => (
+          {participants?.map((developer) => (
             <MyProjectParticipant
               key={developer._id}
               handleRemoveParticipantClick={handleRemoveParticipantClick}

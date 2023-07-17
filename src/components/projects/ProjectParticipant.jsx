@@ -51,7 +51,7 @@ const ProjectParticipant = ({ developer }) => {
 
     var config = {
       method: "POST",
-      url: "http://localhost:5000/api/users/follow",
+      url: `${process.env.REACT_APP_BASE_URL}/api/users/follow`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),
@@ -76,7 +76,7 @@ const ProjectParticipant = ({ developer }) => {
 
     var config = {
       method: "POST",
-      url: "http://localhost:5000/api/users/unfollow",
+      url: `${process.env.REACT_APP_BASE_URL}/api/users/unfollow`,
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("garbage"),
